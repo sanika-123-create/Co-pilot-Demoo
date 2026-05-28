@@ -21,7 +21,7 @@ public with sharing class TestDataFactory {
                 BillingPostalCode = '12345',
                 BillingCity = 'SupplierTown',
                 BillingCountry = 'USA',
-                BillingState = 'ST',
+                BillingState = 'ST'
             );
             records.add(accountObj);
         }
