@@ -35,10 +35,10 @@ Example:
 
 ```apex
 @isTest
-public with sharing class AccountDaoTest {
+public with sharing class CC_AccountDaoTest {
     @TestSetup
     static void makeData() {
-        // use CC_TestDataFactory
+        // use TestDataFactory
     }
 
     @isTest

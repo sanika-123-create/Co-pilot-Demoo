@@ -199,21 +199,21 @@ Before finalizing, verify: CRUD/FLS enforced (SOQL + DML) · explicit sharing ke
 
 | Type | Pattern | Example |
 |---|---|---|
-| Service | `{SObject}Service` | `AccountService` |
-| Selector | `{SObject}Selector` | `AccountSelector` |
-| Domain | `{SObject}Domain` | `OpportunityDomain` |
-| Batch | `{Descriptive}Batch` | `AccountDeduplicationBatch` |
-| Queueable | `{Descriptive}Queueable` | `ExternalSyncQueueable` |
-| Schedulable | `{Descriptive}Schedulable` | `DailyCleanupSchedulable` |
-| DTO | `{Descriptive}DTO` | `AccountMergeRequestDTO` |
-| Wrapper | `{Descriptive}Wrapper` | `OpportunityLineWrapper` |
-| Utility | `{Descriptive}Util` | `StringUtil` |
-| Interface | `I{Descriptive}` | `INotificationService` |
-| Abstract | `Abstract{Descriptive}` | `AbstractIntegrationService` |
-| Exception | `{Descriptive}Exception` | `AccountServiceException` |
-| REST Resource | `{SObject}RestResource` | `AccountRestResource` |
-| Trigger | `{SObject}Trigger` | `AccountTrigger` |
-| Trigger Action | `TA_{SObject}_{Action}` | `TA_Account_SetDefaults` |
+| Service | `{SObject}Service` | `CC_AccountService` |
+| Selector | `{SObject}Selector` | `CC_AccountSelector` |
+| Domain | `{SObject}Domain` | `CC_OpportunityDomain` |
+| Batch | `{Descriptive}Batch` | `CC_AccountDeduplicationBatch` |
+| Queueable | `{Descriptive}Queueable` | `CC_ExternalSyncQueueable` |
+| Schedulable | `{Descriptive}Schedulable` | `CC_DailyCleanupSchedulable` |
+| DTO | `{Descriptive}DTO` | `CC_AccountMergeRequestDTO` |
+| Wrapper | `{Descriptive}Wrapper` | `CC_OpportunityLineWrapper` |
+| Utility | `{Descriptive}Util` | `CC_StringUtil` |
+| Interface | `I{Descriptive}` | `CC_INotificationService` |
+| Abstract | `Abstract{Descriptive}` | `CC_AbstractIntegrationService` |
+| Exception | `{Descriptive}Exception` | `CC_AccountServiceException` |
+| REST Resource | `{SObject}RestResource` | `CC_AccountRestResource` |
+| Trigger | `{SObject}Trigger` | `CC_AccountTrigger` |
+| Trigger Action | `TA_{SObject}_{Action}` | `CC_TA_Account_SetDefaults` |
 
 Additional naming rules:
 - Classes: `PascalCase`
