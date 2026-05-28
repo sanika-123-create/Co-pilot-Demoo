@@ -1,0 +1,212 @@
+## 3) LWC FRAMEWORK
+
+### 3.1 Component Structure
+
+```javascript
+// imports
+import { LightningElement, track, wire } from 'lwc';
+import methodName from '@salesforce/apex/CC_ClassName.methodName';
+import resourceUrl from '@salesforce/resourceUrl/ResourceName';
+
+export default class cc_componentName extends LightningElement {
+    
+    // Public properties
+    @api recordId;
+    
+    // Tracked properties (reactive)
+    @track isLoading = false;
+    @track recordData = {};
+    @track errorMessage = '';
+    
+    // Wire methods (reactive data binding)
+    @wire(getRecord, { recordId: '$recordId' })
+    wireGetRecord({ error, data }) {
+        if (data) {
+            this.recordData = data;
+        } else if (error) {
+            this.errorMessage = error.body.message;
+        }
+    }
+    
+    // Lifecycle hooks
+    connectedCallback() {
+        this.loadInitialData();
+    }
+    
+    disconnectedCallback() {
+        // Cleanup
+    }
+    
+    // Event handlers
+    handleRecordSave() {
+        this.isLoading = true;
+        someApexMethod({ recordData: this.recordData })
+            .then(result => {
+                this.recordData = result;
+                this.showToast('Success', 'Record saved', 'success');
+            })
+            .catch(error => {
+                this.errorMessage = this.formatErrorMessage(error);
+                this.showToast('Error', this.errorMessage, 'error');
+            })
+            .finally(() => {
+                this.isLoading = false;
+            });
+    }
+    
+    // Helper methods
+    loadInitialData() {
+        // Initialize component
+    }
+    
+    showToast(title, message, variant) {
+        const event = new ShowToastEvent({
+            title,
+            message,
+            variant
+        });
+        this.dispatchEvent(event);
+    }
+    
+    formatErrorMessage(error) {
+        if (error.body && error.body.message) {
+            return error.body.message;
+        }
+        return 'An error occurred';
+    }
+}
+```
+
+### 3.2 Apex Integration
+
+**Import and call Apex:**
+```javascript
+import getClaimDetails from '@salesforce/apex/CC_ClaimController.getClaimDetails';
+
+// In method:
+getClaimDetails({ claimId: this.recordId })
+    .then(response => {
+        if (response.isSuccess) {
+            this.claimData = response.data;
+        } else {
+            this.errorMessage = response.message;
+        }
+    })
+    .catch(error => {
+        console.error('Apex Error:', error);
+    });
+```
+
+**Expected Apex Response:**
+```apex
+{
+    "isSuccess": true,
+    "data": [...],
+    "message": ""
+}
+```
+
+### 3.3 Template Patterns
+
+**Conditional Rendering:**
+```html
+<template if:true={isLoading}>
+    <lightning-spinner></lightning-spinner>
+</template>
+
+<template if:false={isLoading}>
+    <lightning-card title="Claim Details">
+        <div class="slds-m-around_medium">
+            <p>{claimData.claimNumber}</p>
+        </div>
+    </lightning-card>
+</template>
+```
+
+**Lists and Iteration:**
+```html
+<template for:each={records} for:item="record">
+    <div key={record.Id} class="slds-m-bottom_small">
+        <lightning-record-view-form record-id={record.Id}>
+            <lightning-output-field field-name="Name"></lightning-output-field>
+        </lightning-record-view-form>
+    </div>
+</template>
+```
+
+**Form and Input:**
+```html
+<lightning-record-edit-form record-id={recordId} onsubmit={handleSave}>
+    <lightning-input-field field-name="Name"></lightning-input-field>
+    <lightning-button type="submit" label="Save"></lightning-button>
+</lightning-record-edit-form>
+```
+
+### 3.4 Naming Conventions
+
+```
+Component JS:      camelCase (cc_generatePDF.js)
+HTML Template:     camelCase (cc_generatePDF.html)
+CSS Stylesheet:    camelCase (cc_generatePDF.css)
+Folder name:       camelCase (cc_generatePDF/)
+```
+
+### 3.5 Error Handling & Toasts
+
+```javascript
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
+// Success toast
+const event = new ShowToastEvent({
+    title: 'Success',
+    message: 'Record saved successfully.',
+    variant: 'success'
+});
+this.dispatchEvent(event);
+
+// Error toast
+showErrorToast(error) {
+    let message = 'An error occurred';
+    if (error.body && error.body.exceptionType === 'AuraHandledException') {
+        message = error.body.message;
+    }
+    const event = new ShowToastEvent({
+        title: 'Error',
+        message,
+        variant: 'error'
+    });
+    this.dispatchEvent(event);
+}
+```
+
+### 3.6 Standards
+
+- ✅ Use `@track` for component properties that change
+- ✅ Use `@api` for parent-to-child communication
+- ✅ Use `@wire` for reactive data fetching
+- ✅ Always hide spinners/loaders in `finally` block
+- ✅ Validate null/undefined before rendering
+- ❌ Avoid DOM manipulation with `querySelector`
+- ❌ Avoid deeply nested conditional rendering
+
+### 3.7 Dynamic Template Selection
+
+```javascript
+render() {
+    if (this.templateName === 'layout1') {
+        return layout1;
+    } else if (this.templateName === 'layout2') {
+        return layout2;
+    }
+    return defaultLayout;
+}
+```
+
+Import multiple templates:
+```javascript
+import layout from './cc_componentName.html';
+import layout1 from './cc_componentNameLayout1.html';
+import layout2 from './cc_componentNameLayout2.html';
+```
+
+---

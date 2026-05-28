@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   SF Claims Management Platform - PMD Static Analysis Ruleset
+   
+   Enforces code quality standards for all Apex and JavaScript artifacts.
+   Target: PMD 7.0+
+   
+   Usage:
+    sf scanner run --target="./**/CC_YourClass.cls" --outfile="ResultApex.csv"
+    sf scanner run --target="./**/cc_yourComponentName.js" --outfile="ResultLWC.csv"   
+
+   Rules are organized by category with severity levels and custom thresholds
+   tuned to the ExpDevClaims codebase conventions.
+-->
+<ruleset name="SF-CMP-PMD-Ruleset"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0
+    http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+    
+    <description>
+        SF Claims Management Platform PMD Ruleset.
+        Enforces security, performance, and maintainability standards.
+    </description>
+    
+    <!-- ============================================================ -->
+    <!-- ERROR-PRONE PATTERNS (CRITICAL - Must Fix Immediately) -->
+    <!-- ============================================================ -->
+    <rule ref="category/apex/errorprone/EmptyWhileStmt">
+        <priority>1</priority>
+        <properties>
+            <property name="message" value="Empty while loop detected - define loop body or condition" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/errorprone/EmptyIfStmt">
+        <priority>1</priority>
+        <properties>
+            <property name="message" value="Empty if statement - add logic or remove condition" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/errorprone/EmptyTryOrFinallyBlock">
+        <priority>1</priority>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- DESIGN - CLASS & METHOD STRUCTURE -->
+    <!-- ============================================================ -->
+    
+    <!-- Complexity Limits -->
+    <rule ref="category/apex/design/CyclomaticComplexity">
+        <priority>2</priority>
+        <properties>
+            <property name="classReportLevel" value="10" />
+            <property name="methodReportLevel" value="10" />
+            <property name="message" value="Method is too complex (Cyclomatic Complexity > 10) - extract helper methods" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/design/NcssMethodCount">
+        <priority>2</priority>
+        <properties>
+            <property name="methodReportLevel" value="40" />
+            <property name="message" value="Method too long (>40 lines) - exceeding 40 lines per method is a warning" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/design/ExcessiveClassLength">
+        <priority>2</priority>
+        <properties>
+            <property name="minimum" value="1000" />
+            <property name="message" value="Class exceeds 1000 lines - consider breaking into smaller classes" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/design/ExcessiveParameterList">
+        <priority>2</priority>
+        <properties>
+            <property name="minimum" value="7" />
+            <property name="message" value="Method has more than 7 parameters - use wrapper object" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/design/ExcessiveMethodLength">
+        <priority>3</priority>
+        <properties>
+            <property name="minimum" value="400" />
+            <property name="message" value="Method exceeds 400 lines - split into smaller methods" />
+        </properties>
+    </rule>
+    
+    <!-- Too Many Fields/Methods -->
+    <rule ref="category/apex/design/TooManyFields">
+        <priority>3</priority>
+        <properties>
+            <property name="maxfields" value="15" />
+            <property name="message" value="Class has too many fields (>15) - consider refactoring" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/design/TooManyMethods">
+        <priority>3</priority>
+        <properties>
+            <property name="maxmethods" value="20" />
+            <property name="message" value="Class has too many methods (>20) - consider breaking into smaller classes" />
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- NAMING CONVENTIONS -->
+    <!-- ============================================================ -->
+    
+    <rule ref="category/apex/style/ClassNamingConventions">
+        <priority>3</priority>
+        <properties>
+            <property name="classPattern" value="[A-Z]([a-zA-Z0-9_]*)" />
+            <property name="message" value="Class name must start with uppercase letter (PascalCase)" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/style/MethodNamingConventions">
+        <priority>3</priority>
+        <properties>
+            <property name="methodPattern" value="[a-z]([a-zA-Z0-9_]*)" />
+            <property name="message" value="Method name must be camelCase (start with lowercase)" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/style/LocalVariableNamingConventions">
+        <priority>3</priority>
+        <properties>
+            <property name="localVarPattern" value="[a-z]([a-zA-Z0-9_]*)" />
+            <property name="message" value="Local variable name must be camelCase" />
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- SECURITY - CRITICAL -->
+    <!-- ============================================================ -->
+    
+    <rule ref="category/apex/security/ApexCRUDViolation">
+        <priority>1</priority>
+        <properties>
+            <property name="message" value="SOQL/DML without CRUD checks - missing isCreateable(), isUpdateable(), etc." />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/security/ApexOpenRedirect">
+        <priority>1</priority>
+        <properties>
+            <property name="message" value="Potential open redirect vulnerability - validate URL before redirect" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/security/ApexSharingViolations">
+        <priority>1</priority>
+        <properties>
+            <property name="message" value="Potential sharing violation - verify query/data access rules" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/security/ApexInsecureEndpoint">
+        <priority>1</priority>
+        <properties>
+            <property name="message" value="Insecure HTTP endpoint - use HTTPS for all callouts" />
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- PERFORMANCE - GOVERNOR LIMITS -->
+    <!-- ============================================================ -->
+    
+    <rule ref="category/apex/performance/AvoidDmlStatementsInLoops">
+        <priority>2</priority>
+        <properties>
+            <property name="message" value="DML statement inside loop - batch outside loop or use Database.executeBatch()" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/performance/AvoidSoqlStatementsInLoops">
+        <priority>2</priority>
+        <properties>
+            <property name="message" value="SOQL query inside loop - query once before loop, use Map for lookups" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/performance/OperationWithLimitsInLoop">
+        <priority>2</priority>
+        <properties>
+            <property name="message" value="Governor limit operation (query/DML/callout) inside loop" />
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- BAD PRACTICES -->
+    <!-- ============================================================ -->
+    
+    <rule ref="category/apex/bestpractices/AvoidDebugStatements">
+        <priority>3</priority>
+        <properties>
+            <property name="message" value="Avoid System.debug() - use CC_LoggerUtility for structured logging" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/bestpractices/UnusedLocalVariable">
+        <priority>3</priority>
+        <properties>
+            <property name="message" value="Unused local variable - remove or use it" />
+        </properties>
+    </rule>
+    
+    <rule ref="category/apex/bestpractices/EmptyStatementBlock">
+        <priority>2</priority>
+        <properties>
+            <property name="message" value="Empty statement block - add logic or comment why" />
+        </properties>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT / LWC RULES (via ESLint integration) -->
+    <!-- ============================================================ -->
+    
+    <!-- These rules apply to LWC JavaScript files -->
+    <!-- ESLint rules are automatically picked up by sf scanner -->
+    
+    <rule ref="category/javascript/errorprone/UnusedVariable">
+        <priority>2</priority>
+    </rule>
+    
+    <rule ref="category/javascript/errorprone/EmptyFinallyBlock">
+        <priority>2</priority>
+    </rule>
+    
+    <!-- ============================================================ -->
+    <!-- DOCUMENTATION & CODE READABILITY -->
+    <!-- ============================================================ -->
+    
+    <!-- ApexDoc: Enforce documentation on public methods -->
+    <rule ref="category/apex/documentation/ApexDoc">
+        <priority>3</priority>
+        <properties>
+            <property name="message" value="Missing ApexDoc - document public methods with @description, @param, @return" />
+        </properties>
+    </rule>
+    
+</ruleset>
