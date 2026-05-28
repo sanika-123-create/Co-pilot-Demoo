@@ -6,8 +6,8 @@
    Target: PMD 7.0+
    
    Usage:
-    sf scanner run --target="./**/CC_YourClass.cls" --outfile="ResultApex.csv"
-    sf scanner run --target="./**/cc_yourComponentName.js" --outfile="ResultLWC.csv"   
+    sf scanner run --target="./**/YourClass.cls" --outfile="ResultApex.csv"
+    sf scanner run --target="./**/yourComponentName.js" --outfile="ResultLWC.csv"   
 
    Rules are organized by category with severity levels and custom thresholds
    tuned to the ExpDevClaims codebase conventions.
@@ -199,7 +199,7 @@
     <rule ref="category/apex/bestpractices/AvoidDebugStatements">
         <priority>3</priority>
         <properties>
-            <property name="message" value="Avoid System.debug() - use CC_LoggerUtility for structured logging" />
+            <property name="message" value="Avoid System.debug() - use LogFactory for structured logging" />
         </properties>
     </rule>
     

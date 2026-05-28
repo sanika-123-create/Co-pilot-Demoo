@@ -13,40 +13,40 @@ The codebase follows a **strict 3-layer architecture**:
 ```
 UI Layer (LWC/VF/Aura)
     ↓
-Controller Layer (CC_{Object}Controller)
+Controller Layer ({Object}Controller)
     ↓
-DAO/Selector Layer (CC_{Object}Dao)
+DAO/Selector Layer ({Object}Dao)
     ↓
 Database (SOQL)
 ```
 
 **Rules:**
-- Controllers handle UI requests and return `CC_Response` wrapper objects
+- Controllers handle UI requests and return `Response` wrapper objects
 - DAOs centralize all SOQL queries—controllers/services NEVER embed SOQL
 - Helpers extract business logic from controllers
-- Triggers delegate to `CC_TriggerHandler` base class
+- Triggers delegate to `TriggerHandler` base class
 
 ### 1.2 Naming Conventions
 
 ```
-DAO Classes:           CC_{Object}Dao
-Controller Classes:    CC_{Object}Controller
-Trigger Classes:       CC_{Object}Trigger
-Trigger Handler:       CC_{Object}TriggerHandler
-Helper Classes:        CC_{ObjectName}Helper / CC_CommonHelper
-Utility Classes:       CC_SharedUtility / CC_CommonUtil
-Wrapper Classes:       CC_{ObjectName}Wrapper or inline inner class
+DAO Classes:           {Object}Dao
+Controller Classes:    {Object}Controller
+Trigger Classes:       {Object}Trigger
+Trigger Handler:       {Object}TriggerHandler
+Helper Classes:        {ObjectName}Helper / CommonHelper
+Utility Classes:       SharedUtility / CommonUtil
+Wrapper Classes:       {ObjectName}Wrapper or inline inner class
 Test Classes:          {ClassName}Test
 Queueable Classes:     {CustomName}Queueable
 Batch Classes:         {CustomName}Batch
 ```
 
 **Examples:**
-- `CC_UserDao.cls` – all User SOQL queries
-- `CC_ClaimController.cls` – Claim UI handlers
-- `CC_ClaimTriggerHandler.cls` – Claim trigger logic
-- `CC_BusinessRulesUtility.cls` – shared business logic
-- `CC_AccountUpdateWrapper.cls` – wrapper for complex data
+- `CaseDao.cls` – all User SOQL queries
+- `ClaimController.cls` – Claim UI handlers
+- `ClaimTriggerHandler.cls` – Claim trigger logic
+- `BusinessRulesUtility.cls` – shared business logic
+- `AccountUpdateWrapper.cls` – wrapper for complex data
 
 ### 1.3 Dynamic SOQL Pattern (MANDATORY for all DAO methods)
 
@@ -54,7 +54,7 @@ Always use `DynamicSOQLSelector` for query building:
 
 ```apex
 public static List<User> getUserByRacfId(String racfId) {
-    return new CC_DynamicSOQLSelector()
+    return new DynamicSOQLSelector()
         .setFrom('User')
         .setFields(new Set<String>{ 'Id', 'ContactId', 'IsActive', 'Phone'})
         .setWhereConditions('email = :emailId')
@@ -92,12 +92,12 @@ public static List<User> getUserByRacfId(String racfId) {
  * @return Case - Single claim record with related data
  **/
 public static Case getClaimDetailsById(String claimId) {
-    List<Case> claims = new CC_DynamicSOQLSelector()
+    List<Case> claims = new DynamicSOQLSelector()
         .setFrom('Case')
         .setFields(new Set<String>{ 
             'Id', 'Name', 'Subject', 'Status', 'Priority',
-            'CC_Claim_Amount__c', 'CreatedDate',
-            'CC_Customer__r.Name', 'CC_Supplier_Claimant__r.Name'
+            'Claim_Amount__c', 'CreatedDate',
+            'Customer__r.Name', 'Supplier_Claimant__r.Name'
         })
         .setWhereConditions('Id = :claimId')
         .setQueryParams(new Map<String, Object>{ 'claimId' => claimId })
@@ -121,10 +121,10 @@ public static List<Case> getClaimsByCustomerAndDateRange(Id customerId, Date sta
     return new DynamicSOQLSelector()
         .setFrom('Case')
         .setFields(new Set<String>{ 
-            'Id', 'Name', 'Status', 'CC_Claim_Amount__c', 
-            'CreatedDate', 'CC_Customer__c'
+            'Id', 'Name', 'Status', 'Claim_Amount__c', 
+            'CreatedDate', 'Customer__c'
         })
-        .setWhereConditions('CC_Customer__c = :customerId AND Status != :closed AND CreatedDate >= :startDate AND CreatedDate <= :endDate')
+        .setWhereConditions('Customer__c = :customerId AND Status != :closed AND CreatedDate >= :startDate AND CreatedDate <= :endDate')
         .setQueryParams(new Map<String, Object>{ 
             'customerId' => customerId,
             'closed' => 'Closed',
@@ -147,7 +147,7 @@ public static List<Case> getClaimsByCustomerAndDateRange(Id customerId, Date sta
 public static List<User> getUserInfoWithFieldSet(String userId) {
     return new DynamicSOQLSelector()
         .setFrom('User')
-        .setFieldSet(Schema.SObjectType.User.fieldSets.CC_UserInfoPreview)
+        .setFieldSet(Schema.SObjectType.User.fieldSets.UserInfoPreview)
         .setWhereConditions('Id = :userId')
         .setQueryParams(new Map<String, Object>{ 'userId' => userId })
         .setLimit(1)
@@ -170,7 +170,7 @@ public static Database.QueryLocator getInactiveUsersForBatch(Integer inactiveDay
         .setFields(new Set<String>{ 'Id', 'IsActive', 'LastLoginDate', 'Profile.Name' })
         .setWhereConditions('Profile.Name IN :profileNames AND LastLoginDate < :inactiveDate AND IsActive = true')
         .setQueryParams(new Map<String, Object>{ 
-            'profileNames' => System.Label.CC_COMMUNITY_LOGIN_PROFILE.split(','),
+            'profileNames' => System.Label.COMMUNITY_LOGIN_PROFILE.split(','),
             'inactiveDate' => inactiveDate
         })
         .getQueryLocator();
@@ -179,21 +179,21 @@ public static Database.QueryLocator getInactiveUsersForBatch(Integer inactiveDay
 
 **Example 5: DAO Pattern in Service Layer (Recommended)**
 ```apex
-public class CC_ClaimService {
+public class ClaimService {
     
     /**
      * @description Get and validate claim details
      * @param claimId - Claim ID to fetch
-     * @return CC_Response - Response wrapper with data and status
+     * @return Response - Response wrapper with data and status
      **/
-    public static CC_Response getClaimDetails(String claimId) {
+    public static Response getClaimDetails(String claimId) {
         Boolean isSuccess = false;
         String message = 'Claim not found';
         List<SObject> data = new List<SObject>();
         
         try {
             // Call DAO for SOQL
-            List<Case> claims = CC_ClaimDao.getClaimById(claimId);
+            List<Case> claims = ClaimDao.getClaimById(claimId);
             
             if (!claims.isEmpty()) {
                 data.addAll(claims);
@@ -205,24 +205,24 @@ public class CC_ClaimService {
             LogFactory.error('ClaimService.getClaimDetails', ex);
         }
         
-        return new CC_Response(isSuccess, data, message);
+        return new Response(isSuccess, data, message);
     }
 }
 ```
 
 ### 1.4 Response Wrapper Pattern
 
-All controllers return `CC_Response`:
+All controllers return `Response`:
 
 ```apex
 @AuraEnabled(cacheable=true)
-public static CC_Response getUserDetails(String userId) {
+public static Response getUserDetails(String userId) {
     Boolean isSuccess = false;
     String message = 'No records found';
     List<User> data = new List<User>();
     
     try {
-        data = CC_UserDao.getUserInfoById(userId);
+        data = UserDao.getUserInfoById(userId);
         if (data != null && !data.isEmpty()) {
             isSuccess = true;
             message = '';
@@ -233,18 +233,18 @@ public static CC_Response getUserDetails(String userId) {
         LogFactory.error('UserController.getUserDetails', ex);
     }
     
-    return new CC_Response(isSuccess, data, message);
+    return new Response(isSuccess, data, message);
 }
 ```
 
 **Response Structure:**
 ```apex
-public class CC_Response {
+public class Response {
     @AuraEnabled public Boolean isSuccess;
     @AuraEnabled public List<SObject> data;
     @AuraEnabled public String message;
     
-    public CC_Response(Boolean isSuccess, List<SObject> data, String message) {
+    public Response(Boolean isSuccess, List<SObject> data, String message) {
         this.isSuccess = isSuccess;
         this.data = data;
         this.message = message;
@@ -272,18 +272,18 @@ LogFactory.logDatabaseErrors('ClassName.methodName', result);
 
 ### 1.6 Trigger Handler Framework
 
-All triggers delegate to `CC_TriggerHandler`:
+All triggers delegate to `TriggerHandler`:
 
 **Trigger Code:**
 ```apex
 trigger ClaimTrigger on Case (before insert, before update, after insert, after update) {
-    new CC_ClaimTriggerHandler().run();
+    new ClaimTriggerHandler().run();
 }
 ```
 
 **Handler Class:**
 ```apex
-public class CC_ClaimTriggerHandler extends CC_TriggerHandler {
+public class ClaimTriggerHandler extends TriggerHandler {
     
     public override void beforeInsert() {
         // validate new claim records
@@ -306,7 +306,7 @@ public class CC_ClaimTriggerHandler extends CC_TriggerHandler {
 **Handler Framework Features:**
 - Automatic trigger context detection (before/after, insert/update/delete/undelete)
 - Loop count prevention (avoid infinite recursion)
-- Bypass mechanism for testing: `CC_TriggerHandler.bypass('ClassName')`
+- Bypass mechanism for testing: `TriggerHandler.bypass('ClassName')`
 - Bulkified DML handling via `existingRecordsToUpdateMap`
 
 ### 1.7 Wrapper/Inner Class Pattern
@@ -314,7 +314,7 @@ public class CC_ClaimTriggerHandler extends CC_TriggerHandler {
 For complex data structures, use inner classes:
 
 ```apex
-public class CC_ClaimHelper {
+public class ClaimHelper {
     
     // Inner wrapper class
     public class ClaimWrapper {
@@ -525,7 +525,7 @@ public class EmailRequestWrapper {
 // Simple email with template
 EmailRequestWrapper emailRequest = new EmailRequestWrapper();
 emailRequest.sourceRecordId = claimRecord.Id;
-emailRequest.templateDeveloperName = 'CC_Claim_Approved_Email';
+emailRequest.templateDeveloperName = 'Claim_Approved_Email';
 emailRequest.toEmailIdList = new List<String>{ 'customer@example.com' };
 emailRequest.ccEmailIdList = new List<String>{ 'manager@example.com' };
 emailRequest.subject = 'Your Claim #' + claimRecord.Name + ' has been approved';
@@ -540,9 +540,9 @@ if (email != null) {
 // Email with PDF attachment (for bulk: pre-query template and org-wide email)
 EmailHelper emailRequest = new EmailRequestWrapper();
 emailRequest.sourceRecordId = claimRecord.Id;
-emailRequest.templateDeveloperName = 'CC_Claim_Summary_PDF';
+emailRequest.templateDeveloperName = 'Claim_Summary_PDF';
 emailRequest.toEmailIdList = new List<String>{ 'customer@example.com' };
-emailRequest.pdfVFPageName = 'CC_ClaimDetailsPrintable';
+emailRequest.pdfVFPageName = 'ClaimDetailsPrintable';
 emailRequest.attachmentFileName = 'Claim_' + claimRecord.Name + '.pdf';
 emailRequest.emailTemplateId = templateId;  // From batch query
 emailRequest.setOrgWideEmailAddressId = orgWideEmailId;  // From batch query
@@ -644,13 +644,13 @@ public static List<Account> getAccountsAsAdmin() {
 ### Pattern: Bulk Operations with Error Handling
 
 ```apex
-public class CC_ClaimBatchProcessor {
+public class ClaimBatchProcessor {
     
     /**
      * @description Update multiple claims in bulk
      * @param claimsToUpdate - Claims requiring updates
      */
-    public static CC_Response updateClaimsInBulk(List<Case> claimsToUpdate) {
+    public static Response updateClaimsInBulk(List<Case> claimsToUpdate) {
         Boolean isSuccess = false;
         String message = '';
         List<SObject> updatedRecords = new List<SObject>();
@@ -679,7 +679,7 @@ public class CC_ClaimBatchProcessor {
             LogFactory.error('ClaimBatchProcessor.updateClaimsInBulk',ex);
         }
         
-        return new CC_Response(isSuccess, updatedRecords, message);
+        return new Response(isSuccess, updatedRecords, message);
     }
 }
 ```
@@ -687,17 +687,17 @@ public class CC_ClaimBatchProcessor {
 ### Pattern: Email Notifications in Batch
 
 ```apex
-public class CC_ClaimNotificationBatch implements Database.Batchable<SObject> {
+public class ClaimNotificationBatch implements Database.Batchable<SObject> {
     
     // Batch execution
     public Database.QueryLocator start(Database.BatchableContext bc) {
         // Use DAO for query
-        return CC_ClaimDao.getClaimsAwaitingNotification();
+        return ClaimDao.getClaimsAwaitingNotification();
     }
     
     public void execute(Database.BatchableContext bc, List<Case> claimsToNotify) {
         // Pre-query template and org-wide email for performance
-        EmailTemplate template = [SELECT Id FROM EmailTemplate WHERE DeveloperName = 'CC_Claim_Notification'];
+        EmailTemplate template = [SELECT Id FROM EmailTemplate WHERE DeveloperName = 'Claim_Notification'];
         OrgWideEmailAddress orgWideEmail = [SELECT Id FROM OrgWideEmailAddress WHERE DisplayName = 'Support'];
         
         List<Messaging.SingleEmailMessage> emailsToSend = new List<Messaging.SingleEmailMessage>();
@@ -705,8 +705,8 @@ public class CC_ClaimNotificationBatch implements Database.Batchable<SObject> {
         for (Case claim : claimsToNotify) {
             EmailRequestWrapper emailRequest = new EmailRequestWrapper();
             emailRequest.sourceRecordId = claim.Id;
-            emailRequest.templateDeveloperName = 'CC_Claim_Notification';
-            emailRequest.toEmailIdList = new List<String>{ claim.CC_Customer__r.Email__c };
+            emailRequest.templateDeveloperName = 'Claim_Notification';
+            emailRequest.toEmailIdList = new List<String>{ claim.Customer__r.Email__c };
             emailRequest.emailTemplateId = template.Id;
             emailRequest.setOrgWideEmailAddressId = orgWideEmail.Id;
             
@@ -735,7 +735,7 @@ public class CC_ClaimNotificationBatch implements Database.Batchable<SObject> {
 
 **Avoid:**
 - ❌ Embedding SOQL in controllers/helpers
-- ❌ Hardcoded literals (use labels: `System.Label.CC_LABEL_NAME`)
+- ❌ Hardcoded literals (use labels: `System.Label.LABEL_NAME`)
 - ❌ Nested if blocks deeper than 3 levels (extract to helper method)
 - ❌ SOQL/DML inside loops (bulkify)
 - ❌ Public modifiers without reason (use private/protected)
@@ -755,7 +755,7 @@ public class CC_ClaimNotificationBatch implements Database.Batchable<SObject> {
 
 ```apex
 @isTest
-public class CC_UserDaoTest {
+public class UserDaoTest {
     
     @TestSetup
     static void setupTestData() {
@@ -774,21 +774,21 @@ public class CC_UserDaoTest {
     
     @isTest
     static void testPositiveScenario() {
-        List<User> result = CC_UserDao.getUserByRacfId('TESTUSER001');
+        List<User> result = UserDao.getUserByRacfId('TESTUSER001');
         System.assertEquals(true, result != null, 'Result should not be null');
         System.assertEquals(1, result.size(), 'One user should be returned');
     }
     
     @isTest
     static void testNegativeScenario() {
-        List<User> result = CC_UserDao.getUserByRacfId('NONEXISTENT');
+        List<User> result = UserDao.getUserByRacfId('NONEXISTENT');
         System.assertEquals(true, result != null, 'Result should be a list');
         System.assertEquals(0, result.size(), 'No users should be returned');
     }
     
     @isTest
     static void testEdgeCaseScenario() {
-        List<User> result = CC_UserDao.getUserByRacfId(null);
+        List<User> result = UserDao.getUserByRacfId(null);
         // Validate null handling
     }
 }
@@ -816,8 +816,8 @@ List<Case> claims = TestDataFactory.createClaim(
     new Map<String, Object> {
         'Status' => 'New',
         'Subject' => 'Test Claim',
-        'CC_Customer__c' => customerAccountId,
-        'CC_Supplier_Claimant__c' => supplierAccountId,
+        'Customer__c' => customerAccountId,
+        'Supplier_Claimant__c' => supplierAccountId,
         'RecordTypeId' => claimRecTypeId
     },
     5  // number of records
@@ -853,14 +853,14 @@ insert adminUser;
 @isTest
 static void testGetUserInfoByIdPositive() {
     // POSITIVE: Valid user ID should return user
-    List<User> result = CC_UserDao.getUserInfoById(UserInfo.getUserId());
+    List<User> result = UserDao.getUserInfoById(UserInfo.getUserId());
     System.assert(result != null, 'Should return user list');
 }
 
 @isTest
 static void testGetUserInfoByIdNegative() {
     // NEGATIVE: Invalid user ID should return empty list
-    List<User> result = CC_UserDao.getUserInfoById('invalidId');
+    List<User> result = UserDao.getUserInfoById('invalidId');
     System.assertEquals(0, result.size(), 'Should return empty list');
 }
 
@@ -868,7 +868,7 @@ static void testGetUserInfoByIdNegative() {
 static void testGetUserInfoByIdEdgeCase() {
     // EDGE CASE: Null ID should handle gracefully
     try {
-        CC_UserDao.getUserInfoById(null);
+        UserDao.getUserInfoById(null);
     } catch (Exception ex) {
         System.assert(true, 'Exception expected for null ID');
     }
@@ -911,7 +911,7 @@ System.assertEquals(100, result.size(), 'All 100 records should be returned');
 
 ```apex
 @isTest
-public class CC_TriggerHandlerTest {
+public class TriggerHandlerTest {
     
     @isTest(SeeAllData=false)
     static void testWithoutOrgData() {
@@ -963,7 +963,7 @@ public static List<User> getUsersByProfile(String profileName) { }
 **Use System Labels for text:**
 ```apex
 // In Apex
-String loginProfile = System.Label.CC_COMMUNITY_LOGIN_PROFILE;
+String loginProfile = System.Label.COMMUNITY_LOGIN_PROFILE;
 
 // In LWC
 import labelName from '@salesforce/label/c.labelApiName';
@@ -971,7 +971,7 @@ import labelName from '@salesforce/label/c.labelApiName';
 
 **In-class constants:**
 ```apex
-public class CC_Constants {
+public class Constants {
     public static final String PROFILE_ADMIN = 'System Administrator';
     public static final String STATUS_ACTIVE = 'Active';
     public static final Integer MAX_QUERY_LIMIT = 50000;
@@ -982,12 +982,12 @@ public class CC_Constants {
 
 **Default:**
 ```apex
-public with sharing class CC_UserController { }
+public with sharing class UserController { }
 ```
 
 **Exception (requires business justification):**
 ```apex
-public without sharing class CC_SystemUtility { 
+public without sharing class SystemUtility { 
     // Justification: System utility needs to bypass sharing for batch jobs
 }
 ```
@@ -997,7 +997,7 @@ public without sharing class CC_SystemUtility {
 Only when justified:
 ```apex
 @SuppressWarnings('PMD.ExcessivePublicCount,PMD.CyclomaticComplexity')
-public class CC_ComplexBusinessLogic { }
+public class ComplexBusinessLogic { }
 ```
 
 ### 5.5 Deprecated Methods
@@ -1016,11 +1016,11 @@ public static void oldMethod() {
 ```
 force-app/main/default/
 ├── classes/
-│   ├── CC_*Dao.cls                  (Data Access Layer)
-│   ├── CC_*Controller.cls          (UI Controllers)
-│   ├── CC_*TriggerHandler.cls      (Trigger Handlers)
-│   ├── CC_*Helper.cls              (Business Logic)
-│   ├── CC_Utility.cls              (Shared Utilities)
+│   ├── *Dao.cls                  (Data Access Layer)
+│   ├── *Controller.cls          (UI Controllers)
+│   ├── *TriggerHandler.cls      (Trigger Handlers)
+│   ├── *Helper.cls              (Business Logic)
+│   ├── Utility.cls              (Shared Utilities)
 │   ├── *Test.cls                         (Unit Tests)
 │   └── TestDataFactory.cls      (Test Data)
 ├── lwc/
@@ -1030,8 +1030,8 @@ force-app/main/default/
 │   │   ├── componentName.css
 │   │   └── componentName.js-meta.xml
 ├── pages/
-│   ├── CC_*.page                   (PDF/Email Templates)
-│   └── CC_*Controller.cls
+│   ├── *.page                   (PDF/Email Templates)
+│   └── *Controller.cls
 ├── triggers/
 │   └── {Object}Trigger.trigger
 └── objects/
@@ -1053,7 +1053,7 @@ force-app/main/default/
 - [ ] Bulk-safe? (not in loops)
 - [ ] Using DynamicSOQLSelector?
 - [ ] Has error logging?
-- [ ] Returns CC_Response if controller?
+- [ ] Returns Response if controller?
 
 ### Before creating new Test class:
 - [ ] Uses @TestSetup for shared data?

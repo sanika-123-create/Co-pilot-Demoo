@@ -46,7 +46,7 @@ All steps are sequential. Do not skip, merge, or reorder. If blocked, stop and a
    - When a `references/` example exists for the type, read it as a concrete style guide
    - **MANDATORY**: Always read `references/generating-apex-framework_Reference.md` sections:
      - § 1.3: Dynamic SOQL DAO Pattern (5 detailed examples)
-     - § 1.8: Utility Classes - Comprehensive Reference (CC_LoggerUtility, CC_DMLUtility, etc.)
+     - § 1.8: Utility Classes - Comprehensive Reference (LogFactory, DMLUtility, etc.)
      - § 1.9: Common Usage Patterns (Bulk operations, Batch email notifications)
    - Review `.github/references/pmd-static-ruleset.xml` for PMD enforcement rules before authoring
    - For any test class work, always read and use `generating-apex-test` skill
@@ -62,8 +62,8 @@ All steps are sequential. Do not skip, merge, or reorder. If blocked, stop and a
 Writing files is the midpoint, not the finish line. Steps 6 and 7 each require a tool invocation and produce output that must appear in the Step 8 report. Do not summarize or present the report until both steps have run and their output is captured.
 
 6. **Run PMD code analyzer**
-   - Invoke for apex class: `sf scanner run --target="./**/CC_YourClass.cls" --outfile="ResultApex.csv"`
-   - Invoke for LWC components: `sf scanner run --target="./**/CC_YourClass.js" --outfile="ResultLWC.csv"`
+   - Invoke for apex class: `sf scanner run --target="./**/YourClass.cls" --outfile="ResultApex.csv"`
+   - Invoke for LWC components: `sf scanner run --target="./**/YourClass.js" --outfile="ResultLWC.csv"`
    - **Remediate ALL violations** before reporting:
      - **Sev 0-1 (Critical)**: Empty statements, SOQL in loops, DML in loops, CRUD violations — MUST FIX
      - **Sev 2 (Major)**: Cyclomatic complexity, excessive parameters, excessive class length — MUST FIX
@@ -74,7 +74,7 @@ Writing files is the midpoint, not the finish line. Steps 6 and 7 each require a
    - If both unavailable: Record `pmd_analysis=unavailable: <reason>` in the report
 
 7. **Execute Apex tests**
-   - Run org tests including `{ClassName}Test` via `sf apex run test --class-names=CC_YourClassTest`
+   - Run org tests including `{ClassName}Test` via `sf apex run test --class-names=YourClassTest`
    - Delegate all test fixes/coverage work to `generating-apex-test`; iterate until green.
    - **Target Coverage**: 90%+ recommended
    - Capture pass/fail counts and coverage percentage for the report.
@@ -97,7 +97,7 @@ Before running the scanner, **manually verify** these common violations:
 | **EmptyWhileStmt / EmptyIfStmt** | No empty while/if blocks | Add logic or remove condition |
 | **ApexCRUDViolation** | All SOQL queries have `WITH USER_MODE` or explicit CRUD checks | Add `WITH USER_MODE` or isListable()/isReadable() checks |
 | **ApexSharingViolations** | Class declares `with sharing` / `without sharing` / `inherited sharing` | Add sharing keyword to class declaration |
-| **AvoidDebugStatements** | No `System.debug()` statements | Replace with `CC_LoggerUtility.addApexErrorLog()` or remove |
+| **AvoidDebugStatements** | No `System.debug()` statements | Replace with `LogFactory.error()` or remove |
 | **UnusedLocalVariable** | All declared variables are used | Remove unused variables or use them |
 | **ApexDoc** | All `public`/`global` methods have ApexDoc (`@param`, `@return`) | Add documentation comments |
 
@@ -199,21 +199,21 @@ Before finalizing, verify: CRUD/FLS enforced (SOQL + DML) · explicit sharing ke
 
 | Type | Pattern | Example |
 |---|---|---|
-| Service | `{SObject}Service` | `CC_AccountService` |
-| Selector | `{SObject}Selector` | `CC_AccountSelector` |
-| Domain | `{SObject}Domain` | `CC_OpportunityDomain` |
-| Batch | `{Descriptive}Batch` | `CC_AccountDeduplicationBatch` |
-| Queueable | `{Descriptive}Queueable` | `CC_ExternalSyncQueueable` |
-| Schedulable | `{Descriptive}Schedulable` | `CC_DailyCleanupSchedulable` |
-| DTO | `{Descriptive}DTO` | `CC_AccountMergeRequestDTO` |
-| Wrapper | `{Descriptive}Wrapper` | `CC_OpportunityLineWrapper` |
-| Utility | `{Descriptive}Util` | `CC_StringUtil` |
-| Interface | `I{Descriptive}` | `CC_INotificationService` |
-| Abstract | `Abstract{Descriptive}` | `CC_AbstractIntegrationService` |
-| Exception | `{Descriptive}Exception` | `CC_AccountServiceException` |
-| REST Resource | `{SObject}RestResource` | `CC_AccountRestResource` |
-| Trigger | `{SObject}Trigger` | `CC_AccountTrigger` |
-| Trigger Action | `TA_{SObject}_{Action}` | `CC_TA_Account_SetDefaults` |
+| Service | `{SObject}Service` | `AccountService` |
+| Selector | `{SObject}Selector` | `AccountSelector` |
+| Domain | `{SObject}Domain` | `OpportunityDomain` |
+| Batch | `{Descriptive}Batch` | `AccountDeduplicationBatch` |
+| Queueable | `{Descriptive}Queueable` | `ExternalSyncQueueable` |
+| Schedulable | `{Descriptive}Schedulable` | `DailyCleanupSchedulable` |
+| DTO | `{Descriptive}DTO` | `AccountMergeRequestDTO` |
+| Wrapper | `{Descriptive}Wrapper` | `OpportunityLineWrapper` |
+| Utility | `{Descriptive}Util` | `StringUtil` |
+| Interface | `I{Descriptive}` | `INotificationService` |
+| Abstract | `Abstract{Descriptive}` | `AbstractIntegrationService` |
+| Exception | `{Descriptive}Exception` | `AccountServiceException` |
+| REST Resource | `{SObject}RestResource` | `AccountRestResource` |
+| Trigger | `{SObject}Trigger` | `AccountTrigger` |
+| Trigger Action | `TA_{SObject}_{Action}` | `TA_Account_SetDefaults` |
 
 Additional naming rules:
 - Classes: `PascalCase`

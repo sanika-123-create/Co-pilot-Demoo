@@ -54,7 +54,7 @@ Apply the structure, naming conventions, and patterns from the asset templates a
 
 - **MANDATORY**: Always read `references/generating-apex-test-framework-reference.md` for local test conventions and factory usage
 - **MANDATORY**: Review `.github/references/pmd-static-ruleset.xml` for code quality rules that apply to test code
-- Reference `generating-apex/references/generating-apex-framework_Reference.md` § 1.8 (Utility Classes) if testing utilities like CC_LoggerUtility, CC_DMLUtility
+- Reference `generating-apex/references/generating-apex-framework_Reference.md` § 1.8 (Utility Classes) if testing utilities like LogFactory, DMLUtility
 
 **MANDATORY — File Deliverables:** For every test class, create BOTH files:
 1. `{ClassName}Test.cls` — the test class (use [assets/test-class-template.cls](assets/test-class-template.cls) as starting point)

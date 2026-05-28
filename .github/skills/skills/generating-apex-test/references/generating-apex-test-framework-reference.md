@@ -17,7 +17,7 @@ static void makeData() {
         'Party_Name__c' => 'BARNHART CRANE & RIGGING CO',
         'Party_Id__c' => '671711'
     };
-    List<Account> accounts = CC_TestDataFactory.createRiggerAccounts(
+    List<Account> accounts = TestDataFactory.createRiggerAccounts(
         new List<Map<String, Object>>{ rigger1 }
     );
     insert accounts;
@@ -30,12 +30,15 @@ static void makeData() {
 - Use `@TestSetup` for shared data.
 - Each test method is focused on a single behavior.
 - Use `Test.startTest()` and `Test.stopTest()` around the code under test.
+- Create a dedicated Apex test class for each Apex class. For example, if a DAO class and a Controller class are created as part of the requirement, generate separate test classes for the DAO and Controller respectively.
+- Create test methods corresponding to each method in the Apex class to ensure proper coverage and validation.
+- Avoid generating unnecessary or redundant test methods that do not validate specific business logic or method behavior.
 
 Example:
 
 ```apex
 @isTest
-public with sharing class CC_AccountDaoTest {
+public with sharing class AccountDaoTest {
     @TestSetup
     static void makeData() {
         // use TestDataFactory
@@ -44,7 +47,7 @@ public with sharing class CC_AccountDaoTest {
     @isTest
     static void getRiggerAccountsTest() {
         Test.startTest();
-        List<Account> riggers = CC_AccountDao.getRiggerAccounts();
+        List<Account> riggers = AccountDao.getRiggerAccounts();
         Test.stopTest();
         System.assertEquals(1, riggers.size(), 'Expected 1 account record');
     }
@@ -63,6 +66,6 @@ public with sharing class CC_AccountDaoTest {
 
 ## 5) Naming
 
-- Test class: `CC_{ClassName}Test` or `CC_{ClassName}_Test` when matching legacy patterns.
+- Test class: `{ClassName}Test` or `{ClassName}_Test` when matching legacy patterns.
 - Test method names are descriptive and usually end with `Test`.
 

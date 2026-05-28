@@ -4,7 +4,7 @@
 ### 4.1 VF Page Structure
 
 ```xml
-<apex:page controller="CC_ClaimController" renderAs="PDF" applyBodyTag="false" showHeader="false">
+<apex:page controller="ClaimController" renderAs="PDF" applyBodyTag="false" showHeader="false">
     <html>
         <head>
             <style>
@@ -27,7 +27,7 @@
                     <td>Amount:</td>
                     <td>
                         <apex:outputText value="{0, number, $}">
-                            <apex:param value="{!claim.CC_Claim_Amount__c}"/>
+                            <apex:param value="{!claim.Claim_Amount__c}"/>
                         </apex:outputText>
                     </td>
                 </tr>
@@ -48,12 +48,12 @@
 ### 4.2 Controller Pattern
 
 ```apex
-public class CC_ClaimController {
+public class ClaimController {
     
     public Case claim { get; private set; }
     public List<Equipment__c> equipmentList { get; private set; }
     
-    public CC_ClaimController() {
+    public ClaimController() {
         Id claimId = ApexPages.currentPage().getParameters().get('id');
         loadClaimData(claimId);
     }
@@ -63,7 +63,7 @@ public class CC_ClaimController {
             return;
         }
         
-        List<Case> claims = CC_ClaimDao.getClaimById(claimId);
+        List<Case> claims = ClaimDao.getClaimById(claimId);
         if (!claims.isEmpty()) {
             this.claim = claims[0];
             loadEquipment(claimId);
@@ -71,7 +71,7 @@ public class CC_ClaimController {
     }
     
     private void loadEquipment(String claimId) {
-        this.equipmentList = CC_EquipmentDao.getEquipmentByClaimId(claimId);
+        this.equipmentList = EquipmentDao.getEquipmentByClaimId(claimId);
     }
 }
 ```
@@ -85,7 +85,7 @@ public class CC_ClaimController {
         Hello {!recipient.FirstName},
         
         Your claim {!claim.Name} has been received.
-        Amount: ${!claim.CC_Claim_Amount__c}
+        Amount: ${!claim.Claim_Amount__c}
         
         Thank you.
     </messaging:plainTextEmailBody>
@@ -95,7 +95,7 @@ public class CC_ClaimController {
             <body>
                 <p>Hello <strong>{!recipient.FirstName}</strong>,</p>
                 <p>Your claim <strong>{!claim.Name}</strong> has been received.</p>
-                <p>Amount: <strong>${!claim.CC_Claim_Amount__c}</strong></p>
+                <p>Amount: <strong>${!claim.Claim_Amount__c}</strong></p>
                 <p>Thank you.</p>
             </body>
         </html>
@@ -115,7 +115,7 @@ public class CC_ClaimController {
 ### 4.5 PDF Rendering
 
 ```xml
-<apex:page controller="CC_ClaimPDFController" renderAs="PDF" applyBodyTag="false">
+<apex:page controller="ClaimPDFController" renderAs="PDF" applyBodyTag="false">
     <head>
         <style type="text/css">
             @page { size: A4; }

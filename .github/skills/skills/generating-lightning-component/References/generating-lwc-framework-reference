@@ -5,10 +5,10 @@
 ```javascript
 // imports
 import { LightningElement, track, wire } from 'lwc';
-import methodName from '@salesforce/apex/CC_ClassName.methodName';
+import methodName from '@salesforce/apex/ClassName.methodName';
 import resourceUrl from '@salesforce/resourceUrl/ResourceName';
 
-export default class cc_componentName extends LightningElement {
+export default class componentName extends LightningElement {
     
     // Public properties
     @api recordId;
@@ -81,7 +81,7 @@ export default class cc_componentName extends LightningElement {
 
 **Import and call Apex:**
 ```javascript
-import getClaimDetails from '@salesforce/apex/CC_ClaimController.getClaimDetails';
+import getClaimDetails from '@salesforce/apex/ClaimController.getClaimDetails';
 
 // In method:
 getClaimDetails({ claimId: this.recordId })
@@ -145,10 +145,10 @@ getClaimDetails({ claimId: this.recordId })
 ### 3.4 Naming Conventions
 
 ```
-Component JS:      camelCase (cc_generatePDF.js)
-HTML Template:     camelCase (cc_generatePDF.html)
-CSS Stylesheet:    camelCase (cc_generatePDF.css)
-Folder name:       camelCase (cc_generatePDF/)
+Component JS:      camelCase (generatePDF.js)
+HTML Template:     camelCase (generatePDF.html)
+CSS Stylesheet:    camelCase (generatePDF.css)
+Folder name:       camelCase (generatePDF/)
 ```
 
 ### 3.5 Error Handling & Toasts
@@ -204,9 +204,9 @@ render() {
 
 Import multiple templates:
 ```javascript
-import layout from './cc_componentName.html';
-import layout1 from './cc_componentNameLayout1.html';
-import layout2 from './cc_componentNameLayout2.html';
+import layout from './componentName.html';
+import layout1 from './componentNameLayout1.html';
+import layout2 from './componentNameLayout2.html';
 ```
 
 ---

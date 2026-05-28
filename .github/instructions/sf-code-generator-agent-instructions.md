@@ -76,22 +76,22 @@ The agent creates production-ready files with framework patterns.
 
 ```
 ⚙️ Step 2/4: Generating Code
-→ Creating SF_Service.cls...
-✓ Created: SF_Service.cls (287 lines)
-✓ Created: SF_Service.cls-meta.xml
+→ Creating Service.cls...
+✓ Created: Service.cls (287 lines)
+✓ Created: Service.cls-meta.xml
 ✓ Framework patterns applied
 ```
 
 
 ### For Apex Classes:
 ```
-force-app/main/default/classes/SF_YourService.cls
-force-app/main/default/classes/SF_YourService.cls-meta.xml
+force-app/main/default/classes/YourService.cls
+force-app/main/default/classes/YourService.cls-meta.xml
 ```
 
 **Generated with:**
 - ✅ Service-Selector-Domain pattern
-- ✅ Framework utility references (SF_LoggerUtility, SF_DMLUtility)
+- ✅ Framework utility references (LogFactory, DMLUtility)
 - ✅ ApexDoc comments (`@param`, `@return`, `@example`)
 - ✅ Exception handling with logging
 - ✅ Bulk-safe code (no SOQL/DML in loops)
@@ -99,12 +99,12 @@ force-app/main/default/classes/SF_YourService.cls-meta.xml
 
 ### For Apex Test Classes:
 ```
-force-app/main/default/classes/SF_YourServiceTest.cls
-force-app/main/default/classes/SF_YourServiceTest.cls-meta.xml
+force-app/main/default/classes/YourServiceTest.cls
+force-app/main/default/classes/YourServiceTest.cls-meta.xml
 ```
 
 **Generated with:**
-- ✅ @TestSetup with SF_TestDataFactory
+- ✅ @TestSetup with TestDataFactory
 - ✅ Given/When/Then structure
 - ✅ Positive + negative + bulk test methods (251+ records)
 - ✅ Assertions with failure messages
@@ -112,10 +112,10 @@ force-app/main/default/classes/SF_YourServiceTest.cls-meta.xml
 
 ### For LWC Components:
 ```
-force-app/main/default/lwc/sf_yourComponentName/sf_yourComponentName.js
-force-app/main/default/lwc/sf_yourComponentName/sf_yourComponentName.html
-force-app/main/default/lwc/sf_yourComponentName/sf_yourComponentName.css
-force-app/main/default/lwc/sf_yourComponentName/sf_yourComponentName.js-meta.xml
+force-app/main/default/lwc/yourComponentName/yourComponentName.js
+force-app/main/default/lwc/yourComponentName/yourComponentName.html
+force-app/main/default/lwc/yourComponentName/yourComponentName.css
+force-app/main/default/lwc/yourComponentName/yourComponentName.js-meta.xml
 ```
 
 ---
@@ -136,7 +136,7 @@ The agent **automatically runs** the PMD scanner using the configured ruleset.
 
 For Apex classes:
 ```bash
-sf scanner run --target="./**/SF_YourService.cls" --format=csv --outfile="ResultApex.csv"
+sf scanner run --target="./**/YourService.cls" --format=csv --outfile="ResultApex.csv"
 ```
 
 For LWC components:
@@ -163,13 +163,13 @@ The agent validates generated code against `.github/references/pmd-static-rulese
 ## ✅ Generation Complete
 
 **Files Created:**
-- [SF_ProcessingService.cls](force-app/main/default/classes/SF_ProcessingService.cls)
-- [SF_ProcessingService.cls-meta.xml](force-app/main/default/classes/SF_ProcessingService.cls-meta.xml)
+- [ProcessingService.cls](force-app/main/default/classes/ProcessingService.cls)
+- [ProcessingService.cls-meta.xml](force-app/main/default/classes/ProcessingService.cls-meta.xml)
 
 ## PMD Validation Results
 
 ### Apex Files:
-- **SF_ProcessingService.cls**: ✅ Clean (0 violations)
+- **ProcessingService.cls**: ✅ Clean (0 violations)
 
 ## Validation Summary
 ✓ Total files generated: 2
@@ -185,7 +185,7 @@ Or, if violations found:
 ## PMD Validation Results
 
 ### Apex Files:
-- **SF_ProcessingService.cls**: ⚠️ 3 violations
+- **ProcessingService.cls**: ⚠️ 3 violations
   - Critical: 0
   - Major: 2 — ExcessiveMethodLength (line 45)
   - Minor: 1 — Naming Convention (line 120)
@@ -234,7 +234,7 @@ The agent **references** these framework files during code generation:
 ### For Apex:
 - 📖 `.github/skills/skills/generating-apex/references/generating-apex-framework-reference.md`
   - § 1.3: Dynamic SOQL DAO Pattern
-  - § 1.8: Utility Classes (SF_LoggerUtility, SF_DMLUtility)
+  - § 1.8: Utility Classes (LogFactory, DMLUtility)
   - § 1.9: Common Usage Patterns
 
 ### For Tests:
@@ -261,9 +261,9 @@ Agent:
 ✓ Target objects: s__c, Equipment__c
 
 ⚙️ Step 2/4: Generating Code
-→ Creating SF_SettlementService.cls...
-✓ Created: SF_SettlementService.cls (287 lines)
-✓ Created: SF_SettlementService.cls-meta.xml
+→ Creating SettlementService.cls...
+✓ Created: SettlementService.cls (287 lines)
+✓ Created: SettlementService.cls-meta.xml
 
 🔍 Step 3/4: Running PMD Scan
 → Scanning Apex files...
@@ -288,11 +288,11 @@ Agent:
 ✓ Target objects: s__c
 
 ⚙️ Step 2/4: Generating Code
-→ Creating sf_claimSubmissionForm...
-✓ Created: sf_claimSubmissionForm.js
-✓ Created: sf_claimSubmissionForm.html
-✓ Created: sf_claimSubmissionForm.js-meta.xml
-✓ Created: sf_claimSubmissionForm.css
+→ Creating claimSubmissionForm...
+✓ Created: claimSubmissionForm.js
+✓ Created: claimSubmissionForm.html
+✓ Created: claimSubmissionForm.js-meta.xml
+✓ Created: claimSubmissionForm.css
 
 🔍 Step 3/4: Running PMD Scan
 → Scanning LWC files...

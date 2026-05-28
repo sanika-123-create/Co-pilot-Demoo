@@ -176,7 +176,7 @@ public without sharing class LogFactory {
 				throw new DMLException('DML error');
 			}
 		} catch (Exception e) {
-			LogFactory.error('CC_BaseController Error while creating record: ', e);
+			LogFactory.error('BaseController Error while creating record: ', e);
 			throw new AuraHandledException(e.getMessage());
 		} finally {
 			LogFactory.saveLog();

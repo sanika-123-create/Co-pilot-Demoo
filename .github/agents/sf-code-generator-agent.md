@@ -69,26 +69,26 @@ Step 4: VALIDATE AGAINST RULESET ✅
 
 **For Apex Classes:**
 1. Reference `.github/skills/skills/generating-apex/references/generating-apex-framework-reference.md` (Section 1.3 for DAO, 1.8 for Utilities)
-2. Apply naming convention: `SF_{Purpose}{Type}` (e.g., SF_ClaimService)
+2. Apply naming convention: `{Purpose}{Type}` (e.g., ClaimService)
 3. Include:
    - Explicit sharing keyword (`with sharing` by default)
    - ApexDoc comments for public methods
-   - Use `SF_LoggerUtility` for error handling
-   - Use `SF_DMLUtility` for DML operations
+   - Use `LogFactory` for error handling
+   - Use `DMLUtility` for DML operations
    - No SOQL/DML in loops
    - No hardcoded IDs
 4. Create `.cls-meta.xml` with API version 66.0
 
 **For Apex Test Classes:**
 1. Reference `.github/skills/skills/generating-apex-test/references/generating-apex-test-framework-reference.md`
-2. Use `SF_TestDataFactory` for test data
+2. Use `TestDataFactory` for test data
 3. Test with 251+ records for bulkification
 4. Name: `{ClassUnderTest}Test`
 
 **For LWC Components:**
 1. Create folder: `force-app/main/default/lwc/{componentName}/`
 2. Generate: `.js`, `.html`, `.js-meta.xml`, `.css` files
-3. Use `SF_LoggerUtility.addLWCErrorLog()` for error handling
+3. Use `LogFactory.error()` for error handling
 4. Call Apex via `@AuraEnabled` methods
 
 **Display Progress:**
@@ -236,9 +236,9 @@ Update status as you progress:
 ✓ Target objects: Claims__c
 
 ⚙️ Step 2/4: Generating Code
-→ Creating SF_ClaimSubmissionService.cls...
-✓ Created: SF_ClaimSubmissionService.cls (287 lines)
-✓ Created: SF_ClaimSubmissionService.cls-meta.xml
+→ Creating ClaimSubmissionService.cls...
+✓ Created: ClaimSubmissionService.cls (287 lines)
+✓ Created: ClaimSubmissionService.cls-meta.xml
 ✓ Framework patterns applied
 
 🔍 Step 3/4: Running PMD Scan
@@ -251,13 +251,13 @@ Update status as you progress:
 ## ✅ Generation Complete
 
 **Files Created:**
-- SF_ClaimSubmissionService.cls
-- SF_ClaimSubmissionService.cls-meta.xml
+- ClaimSubmissionService.cls
+- ClaimSubmissionService.cls-meta.xml
 
 ## PMD Validation Results
 
 ### Apex Files:
-- **SF_ClaimSubmissionService.cls**: ✅ Clean (0 violations)
+- **ClaimSubmissionService.cls**: ✅ Clean (0 violations)
 
 ## Validation Summary
 ✓ Total files generated: 2
