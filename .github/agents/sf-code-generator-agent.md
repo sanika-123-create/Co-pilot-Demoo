@@ -84,6 +84,7 @@ Step 4: VALIDATE AGAINST RULESET ✅
 2. Use `TestDataFactory` for test data
 3. Test with 251+ records for bulkification
 4. Name: `{ClassUnderTest}Test`
+5. Create `.cls-meta.xml` with API version 66.0
 
 **For LWC Components:**
 1. Create folder: `force-app/main/default/lwc/{componentName}/`

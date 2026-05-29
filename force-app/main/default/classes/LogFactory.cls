@@ -31,6 +31,15 @@ public without sharing class LogFactory {
 		newLog(TYPE_ERROR, sourceClass, message);
 	}
 
+	/** 
+	 * @description Method to create a Log record with type ERROR
+	 * @param sourceClass - Name of the class where the error originated
+	 * @param message - Output message containing information related to the error (Stacktrace, Message etc.)
+	 **/
+	public static void error(String sourceClass, String error,String errorline, String message) {
+		newLog(TYPE_ERROR, sourceClass+error, errorline + ' ' + message);
+	}
+
 	/**
 	 * @description Method to create a Log record with type ERROR
 	 * @param sourceClass - Name of the class where the error originated
@@ -176,7 +185,7 @@ public without sharing class LogFactory {
 				throw new DMLException('DML error');
 			}
 		} catch (Exception e) {
-			LogFactory.error('BaseController Error while creating record: ', e);
+			LogFactory.error('CC_BaseController Error while creating record: ', e);
 			throw new AuraHandledException(e.getMessage());
 		} finally {
 			LogFactory.saveLog();
